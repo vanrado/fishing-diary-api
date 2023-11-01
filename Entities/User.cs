@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace FishingDiaryAPI.Models
+namespace FishingDiaryAPI.Entities
 {
     public class User
     {

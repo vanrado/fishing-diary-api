@@ -2,6 +2,7 @@ using FishingDiaryAPI.DbContexts;
 using FishingDiaryAPI.Mocks;
 using FishingDiaryAPI.Models;
 using Microsoft.EntityFrameworkCore;
+using AutoMapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddAuthentication("Bearer");
                 //.AddJwtBearer();
 builder.Services.AddAuthorization();
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
 
@@ -65,22 +67,22 @@ app.MapPost("/api/diary/entries", async (FishingDiaryEntryDto entry) =>
 }).Produces<FishingDiaryEntryDto>(201);
 
 
-app.MapGet("/api/fisheries", async (FisheryDbContext fisheryDb) =>
+app.MapGet("/api/fisheries", async (FisheryDbContext fisheryDb, IMapper mapper) =>
 {
-    return Results.Ok(await fisheryDb.Fisheries.ToListAsync());
-}).Produces<List<Fishery>>(200);
+    return Results.Ok(mapper.Map<IEnumerable<FisheryDto>>(await fisheryDb.Fisheries.ToListAsync()));
+}).Produces<List<FisheryDto>>(200);
 
-app.MapGet("/api/fisheries/{fisheryId:guid}", async (FisheryDbContext fisheryDb, Guid fisheryId) =>
+app.MapGet("/api/fisheries/{fisheryId:guid}", async (FisheryDbContext fisheryDb, Guid fisheryId, IMapper mapper) =>
 {
     var fisheryObject = await fisheryDb.Fisheries.FirstOrDefaultAsync(fishery => fishery.Id == fisheryId);
     if (fisheryObject != null)
     {
-        return Results.Ok(fisheryObject);
+        return Results.Ok(mapper.Map<FisheryDto>(fisheryObject));
     } else
     {
         return Results.NotFound();
     }
-}).Produces<Fishery>(200);
+}).Produces<FisheryDto>(200);
 
 app.MapGet("/api/fisheries/{fisheryId:guid}/images", async (FisheryDbContext fisheryDb, Guid fisheryId) =>
 {
@@ -95,18 +97,18 @@ app.MapGet("/api/fisheries/{fisheryId:guid}/images", async (FisheryDbContext fis
     }
 }).Produces<List<string>>(200);
 
-app.MapGet("/api/fisheries/{fisheryName}", async (FisheryDbContext fisheryDb, string fisheryName) =>
+app.MapGet("/api/fisheries/{fisheryName}", async (FisheryDbContext fisheryDb, string fisheryName, IMapper mapper) =>
 {
     var fisheryObject = await fisheryDb.Fisheries.FirstOrDefaultAsync(fishery => fishery.Title == fisheryName);
     if (fisheryObject != null)
     {
-        return Results.Ok(fisheryObject);
+        return Results.Ok(mapper.Map<FisheryDto>(fisheryObject));
     }
     else
     {
         return Results.NotFound();
     }
-}).Produces<Fishery>(200);
+}).Produces<FisheryDto>(200);
 
 
 

@@ -1,4 +1,5 @@
 ﻿using FishingDiaryAPI.Models;
+using FishingDiaryAPI.Entities;
 
 namespace FishingDiaryAPI.Mocks
 {
