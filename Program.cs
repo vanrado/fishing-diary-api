@@ -3,6 +3,7 @@ using FishingDiaryAPI.Mocks;
 using FishingDiaryAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -72,6 +73,19 @@ app.MapGet("/api/fisheries", async (FisheryDbContext fisheryDb, IMapper mapper) 
     return Results.Ok(mapper.Map<IEnumerable<FisheryDto>>(await fisheryDb.Fisheries.ToListAsync()));
 }).Produces<List<FisheryDto>>(200);
 
+app.MapGet("/api/fisheries/search", async (FisheryDbContext fisheryDb, IMapper mapper, [FromQuery] string fisheryName) =>
+{
+    var fisheryObject = await fisheryDb.Fisheries.FirstOrDefaultAsync(fishery => fishery.Title.Contains(fisheryName));
+    if (fisheryObject != null)
+    {
+        return Results.Ok(mapper.Map<FisheryDto>(fisheryObject));
+    }
+    else
+    {
+        return Results.NotFound();
+    }
+}).Produces<FisheryDto>(200);
+
 app.MapGet("/api/fisheries/{fisheryId:guid}", async (FisheryDbContext fisheryDb, Guid fisheryId, IMapper mapper) =>
 {
     var fisheryObject = await fisheryDb.Fisheries.FirstOrDefaultAsync(fishery => fishery.Id == fisheryId);
@@ -96,19 +110,6 @@ app.MapGet("/api/fisheries/{fisheryId:guid}/images", async (FisheryDbContext fis
         return Results.NotFound();
     }
 }).Produces<List<string>>(200);
-
-app.MapGet("/api/fisheries/{fisheryName}", async (FisheryDbContext fisheryDb, string fisheryName, IMapper mapper) =>
-{
-    var fisheryObject = await fisheryDb.Fisheries.FirstOrDefaultAsync(fishery => fishery.Title == fisheryName);
-    if (fisheryObject != null)
-    {
-        return Results.Ok(mapper.Map<FisheryDto>(fisheryObject));
-    }
-    else
-    {
-        return Results.NotFound();
-    }
-}).Produces<FisheryDto>(200);
 
 
 
