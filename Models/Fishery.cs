@@ -10,5 +10,6 @@ namespace FishingDiaryAPI.Models
 
         [Required]
         public required string Title { get; set; }
+        public List<string> Images { get; set; } = new List<string>();
     }
 }
