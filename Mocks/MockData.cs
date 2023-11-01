@@ -49,11 +49,21 @@ namespace FishingDiaryAPI.Mocks
             {
                 Id = Guid.Parse("d28888e9-2ba9-473a-a40f-e38cb54f9b35"),
                 Title = "VN Evička",
+                Images =
+                {
+                    "https://www.fishsurfing.com/cdn/fspw-sk-images/30769/5d426de9.webp",
+                    "https://www.fishsurfing.com/cdn/fspw-sk-images/30769/7a0e641c.webp",
+                }
             },
             new Fishery
             {
                 Id = Guid.Parse("da2fd609-d754-4feb-8acd-c4f9ff13ba96"),
                 Title = "OR Melečka č. 1",
+                Images =
+                {
+                    "https://www.fishsurfing.com/cdn/fspw-sk-images/31274/09ce1094.webp",
+                    "https://www.fishsurfing.com/cdn/fspw-sk-images/31274/2731d261.webp",
+                }
             },
         };
         }

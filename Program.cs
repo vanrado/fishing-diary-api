@@ -70,7 +70,7 @@ app.MapGet("/api/fisheries", async (FisheryDbContext fisheryDb) =>
     return Results.Ok(await fisheryDb.Fisheries.ToListAsync());
 }).Produces<List<Fishery>>(200);
 
-app.MapGet("/api/fisheries/{fisheryId}", async (FisheryDbContext fisheryDb, Guid fisheryId) =>
+app.MapGet("/api/fisheries/{fisheryId:guid}", async (FisheryDbContext fisheryDb, Guid fisheryId) =>
 {
     var fisheryObject = await fisheryDb.Fisheries.FirstOrDefaultAsync(fishery => fishery.Id == fisheryId);
     if (fisheryObject != null)
@@ -81,6 +81,33 @@ app.MapGet("/api/fisheries/{fisheryId}", async (FisheryDbContext fisheryDb, Guid
         return Results.NotFound();
     }
 }).Produces<Fishery>(200);
+
+app.MapGet("/api/fisheries/{fisheryId:guid}/images", async (FisheryDbContext fisheryDb, Guid fisheryId) =>
+{
+    var fisheryObject = await fisheryDb.Fisheries.FirstOrDefaultAsync(fishery => fishery.Id == fisheryId);
+    if (fisheryObject != null)
+    {
+        return Results.Ok(fisheryObject.Images);
+    }
+    else
+    {
+        return Results.NotFound();
+    }
+}).Produces<List<string>>(200);
+
+app.MapGet("/api/fisheries/{fisheryName}", async (FisheryDbContext fisheryDb, string fisheryName) =>
+{
+    var fisheryObject = await fisheryDb.Fisheries.FirstOrDefaultAsync(fishery => fishery.Title == fisheryName);
+    if (fisheryObject != null)
+    {
+        return Results.Ok(fisheryObject);
+    }
+    else
+    {
+        return Results.NotFound();
+    }
+}).Produces<Fishery>(200);
+
 
 
 // recreate & migrate the database on each run, for demo purposes
