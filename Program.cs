@@ -82,7 +82,11 @@ app.MapGet("/api/fisheries/search", async Task<Results<NotFound, Ok<IEnumerable<
     return TypedResults.Ok(mappedDtos);
 }).Produces<IEnumerable<FisheryDto>>(StatusCodes.Status200OK);
 
-app.MapPost("/api/fisheries", async Task<CreatedAtRoute<FisheryDto>> (FisheryDbContext fisheryDb, IMapper mapper, FisheryForCreationDto fishery) =>
+
+var fisheriesEndpoint = app.MapGroup("/api/fisheries");
+var fisheriesWithGuidIdEndpoints = fisheriesEndpoint.MapGroup("/{fisheryId:guid}");
+
+fisheriesEndpoint.MapPost("", async Task<CreatedAtRoute<FisheryDto>> (FisheryDbContext fisheryDb, IMapper mapper, FisheryForCreationDto fishery) =>
 {
     var fisheryEntity = mapper.Map<Fishery>(fishery);
     fisheryDb.Add(fisheryEntity);
@@ -94,7 +98,7 @@ app.MapPost("/api/fisheries", async Task<CreatedAtRoute<FisheryDto>> (FisheryDbC
         new { fisheryId = fisheryDto.Id });
 }).Produces<FisheryDto>(StatusCodes.Status201Created);
 
-app.MapGet("/api/fisheries/{fisheryId:guid}", async Task<Results<NotFound, Ok<FisheryDto>>> (FisheryDbContext fisheryDb, Guid fisheryId, IMapper mapper) =>
+fisheriesWithGuidIdEndpoints.MapGet("", async Task<Results<NotFound, Ok<FisheryDto>>> (FisheryDbContext fisheryDb, Guid fisheryId, IMapper mapper) =>
 {
     var fisheryObject = await fisheryDb.Fisheries.FirstOrDefaultAsync(fishery => fishery.Id == fisheryId);
     if (fisheryObject == null)
@@ -105,7 +109,7 @@ app.MapGet("/api/fisheries/{fisheryId:guid}", async Task<Results<NotFound, Ok<Fi
     return TypedResults.Ok(mapper.Map<FisheryDto>(fisheryObject));
 }).WithName("GetFishery").Produces<FisheryDto>(StatusCodes.Status200OK).Produces<NotFound>(StatusCodes.Status404NotFound);
 
-app.MapPut("/api/fisheries/{fisheryId:guid}", async Task<Results<NotFound, Ok<FisheryDto>>> (FisheryDbContext fisheryDb, IMapper mapper, Guid fisheryId, FisheryForUpdate fisheryForUpdate) =>
+fisheriesWithGuidIdEndpoints.MapPut("", async Task<Results<NotFound, Ok<FisheryDto>>> (FisheryDbContext fisheryDb, IMapper mapper, Guid fisheryId, FisheryForUpdate fisheryForUpdate) =>
 {
     var fisheryObject = await fisheryDb.Fisheries.FirstOrDefaultAsync(fishery => fishery.Id == fisheryId);
     if (fisheryObject == null)
@@ -117,7 +121,7 @@ app.MapPut("/api/fisheries/{fisheryId:guid}", async Task<Results<NotFound, Ok<Fi
     return TypedResults.Ok(mapper.Map<FisheryDto>(fisheryObject));
 }).Produces<FisheryDto>(StatusCodes.Status200OK).Produces<NotFound>(StatusCodes.Status404NotFound);
 
-app.MapDelete("/api/fisheries/{fisheryId:guid}", async Task<Results<NotFound, NoContent>> (FisheryDbContext fisheryDb, Guid fisheryId) =>
+fisheriesWithGuidIdEndpoints.MapDelete("", async Task<Results<NotFound, NoContent>> (FisheryDbContext fisheryDb, Guid fisheryId) =>
 {
     var fisheryObject = await fisheryDb.Fisheries.FirstOrDefaultAsync(fishery => fishery.Id == fisheryId);
     if (fisheryObject == null)
@@ -129,7 +133,7 @@ app.MapDelete("/api/fisheries/{fisheryId:guid}", async Task<Results<NotFound, No
     return TypedResults.NoContent();
 }).Produces<FisheryDto>(StatusCodes.Status204NoContent).Produces<NotFound>(StatusCodes.Status404NotFound);
 
-app.MapGet("/api/fisheries/{fisheryId:guid}/images", async Task<Results<NotFound, Ok<List<string>>>> (FisheryDbContext fisheryDb, Guid fisheryId) =>
+fisheriesWithGuidIdEndpoints.MapGet("/images", async Task<Results<NotFound, Ok<List<string>>>> (FisheryDbContext fisheryDb, Guid fisheryId) =>
 {
     var fisheryObject = await fisheryDb.Fisheries.FirstOrDefaultAsync(fishery => fishery.Id == fisheryId);
     if (fisheryObject != null)
