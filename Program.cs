@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http.HttpResults;
+using FishingDiaryAPI.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -81,6 +82,18 @@ app.MapGet("/api/fisheries/search", async Task<Results<NotFound, Ok<IEnumerable<
     return TypedResults.Ok(mappedDtos);
 }).Produces<IEnumerable<FisheryDto>>(StatusCodes.Status200OK);
 
+app.MapPost("/api/fisheries", async Task<CreatedAtRoute<FisheryDto>> (FisheryDbContext fisheryDb, IMapper mapper, FisheryForCreationDto fishery) =>
+{
+    var fisheryEntity = mapper.Map<Fishery>(fishery);
+    fisheryDb.Add(fisheryEntity);
+    await fisheryDb.SaveChangesAsync();
+    var fisheryDto = mapper.Map<FisheryDto>(fisheryEntity);
+    return TypedResults.CreatedAtRoute(
+        fisheryDto, 
+        "GetFishery", 
+        new { fisheryId = fisheryDto.Id });
+}).Produces<FisheryDto>(StatusCodes.Status201Created);
+
 app.MapGet("/api/fisheries/{fisheryId:guid}", async Task<Results<NotFound, Ok<FisheryDto>>> (FisheryDbContext fisheryDb, Guid fisheryId, IMapper mapper) =>
 {
     var fisheryObject = await fisheryDb.Fisheries.FirstOrDefaultAsync(fishery => fishery.Id == fisheryId);
@@ -91,7 +104,7 @@ app.MapGet("/api/fisheries/{fisheryId:guid}", async Task<Results<NotFound, Ok<Fi
     {
         return TypedResults.NotFound();
     }
-}).Produces<FisheryDto>(StatusCodes.Status200OK).Produces<NotFound>(StatusCodes.Status404NotFound);
+}).WithName("GetFishery").Produces<FisheryDto>(StatusCodes.Status200OK).Produces<NotFound>(StatusCodes.Status404NotFound);
 
 app.MapGet("/api/fisheries/{fisheryId:guid}/images", async Task<Results<NotFound, Ok<List<string>>>> (FisheryDbContext fisheryDb, Guid fisheryId) =>
 {

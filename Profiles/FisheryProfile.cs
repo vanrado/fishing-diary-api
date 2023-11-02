@@ -8,6 +8,7 @@ namespace FishingDiaryAPI.Profiles
     {
         public FisheryProfile() { 
             CreateMap<Fishery, FisheryDto>();
+            CreateMap<FisheryForCreationDto, Fishery>();
         }
     }
 }
