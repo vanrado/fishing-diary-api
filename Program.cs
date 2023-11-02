@@ -4,6 +4,7 @@ using FishingDiaryAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -68,50 +69,42 @@ app.MapPost("/api/diary/entries", async (FishingDiaryEntryDto entry) =>
 }).Produces<FishingDiaryEntryDto>(201);
 
 
-app.MapGet("/api/fisheries", async (FisheryDbContext fisheryDb, IMapper mapper) =>
+app.MapGet("/api/fisheries", async Task<Ok<IEnumerable<FisheryDto>>> (FisheryDbContext fisheryDb, IMapper mapper) =>
 {
-    return Results.Ok(mapper.Map<IEnumerable<FisheryDto>>(await fisheryDb.Fisheries.ToListAsync()));
-}).Produces<List<FisheryDto>>(200);
+    return TypedResults.Ok(mapper.Map<IEnumerable<FisheryDto>>(await fisheryDb.Fisheries.ToListAsync()));
+}).Produces<IEnumerable<FisheryDto>>(StatusCodes.Status200OK);
 
-app.MapGet("/api/fisheries/search", async (FisheryDbContext fisheryDb, IMapper mapper, [FromQuery] string fisheryName) =>
+app.MapGet("/api/fisheries/search", async Task<Results<NotFound, Ok<IEnumerable<FisheryDto>>>> (FisheryDbContext fisheryDb, IMapper mapper, [FromQuery] string fisheryName) =>
 {
-    var fisheryObject = await fisheryDb.Fisheries.FirstOrDefaultAsync(fishery => fishery.Title.Contains(fisheryName));
-    if (fisheryObject != null)
-    {
-        return Results.Ok(mapper.Map<FisheryDto>(fisheryObject));
-    }
-    else
-    {
-        return Results.NotFound();
-    }
-}).Produces<FisheryDto>(200);
+    var fisheryObject = await fisheryDb.Fisheries.Where(fishery => fishery.Title.Contains(fisheryName)).ToListAsync();
+    var mappedDtos = mapper.Map<IEnumerable<FisheryDto>>(fisheryObject);
+    return TypedResults.Ok(mappedDtos);
+}).Produces<IEnumerable<FisheryDto>>(StatusCodes.Status200OK);
 
-app.MapGet("/api/fisheries/{fisheryId:guid}", async (FisheryDbContext fisheryDb, Guid fisheryId, IMapper mapper) =>
+app.MapGet("/api/fisheries/{fisheryId:guid}", async Task<Results<NotFound, Ok<FisheryDto>>> (FisheryDbContext fisheryDb, Guid fisheryId, IMapper mapper) =>
 {
     var fisheryObject = await fisheryDb.Fisheries.FirstOrDefaultAsync(fishery => fishery.Id == fisheryId);
     if (fisheryObject != null)
     {
-        return Results.Ok(mapper.Map<FisheryDto>(fisheryObject));
+        return TypedResults.Ok(mapper.Map<FisheryDto>(fisheryObject));
     } else
     {
-        return Results.NotFound();
+        return TypedResults.NotFound();
     }
-}).Produces<FisheryDto>(200);
+}).Produces<FisheryDto>(StatusCodes.Status200OK).Produces<NotFound>(StatusCodes.Status404NotFound);
 
-app.MapGet("/api/fisheries/{fisheryId:guid}/images", async (FisheryDbContext fisheryDb, Guid fisheryId) =>
+app.MapGet("/api/fisheries/{fisheryId:guid}/images", async Task<Results<NotFound, Ok<List<string>>>> (FisheryDbContext fisheryDb, Guid fisheryId) =>
 {
     var fisheryObject = await fisheryDb.Fisheries.FirstOrDefaultAsync(fishery => fishery.Id == fisheryId);
     if (fisheryObject != null)
     {
-        return Results.Ok(fisheryObject.Images);
+        return TypedResults.Ok(fisheryObject.Images);
     }
     else
     {
-        return Results.NotFound();
+        return TypedResults.NotFound();
     }
-}).Produces<List<string>>(200);
-
-
+}).Produces<FisheryDto>(StatusCodes.Status200OK).Produces<NotFound>(StatusCodes.Status404NotFound);
 
 // recreate & migrate the database on each run, for demo purposes
 using (var serviceScope = app.Services.GetService<IServiceScopeFactory>().CreateScope())
