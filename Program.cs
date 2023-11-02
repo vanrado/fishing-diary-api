@@ -97,14 +97,37 @@ app.MapPost("/api/fisheries", async Task<CreatedAtRoute<FisheryDto>> (FisheryDbC
 app.MapGet("/api/fisheries/{fisheryId:guid}", async Task<Results<NotFound, Ok<FisheryDto>>> (FisheryDbContext fisheryDb, Guid fisheryId, IMapper mapper) =>
 {
     var fisheryObject = await fisheryDb.Fisheries.FirstOrDefaultAsync(fishery => fishery.Id == fisheryId);
-    if (fisheryObject != null)
-    {
-        return TypedResults.Ok(mapper.Map<FisheryDto>(fisheryObject));
-    } else
+    if (fisheryObject == null)
     {
         return TypedResults.NotFound();
     }
+
+    return TypedResults.Ok(mapper.Map<FisheryDto>(fisheryObject));
 }).WithName("GetFishery").Produces<FisheryDto>(StatusCodes.Status200OK).Produces<NotFound>(StatusCodes.Status404NotFound);
+
+app.MapPut("/api/fisheries/{fisheryId:guid}", async Task<Results<NotFound, Ok<FisheryDto>>> (FisheryDbContext fisheryDb, IMapper mapper, Guid fisheryId, FisheryForUpdate fisheryForUpdate) =>
+{
+    var fisheryObject = await fisheryDb.Fisheries.FirstOrDefaultAsync(fishery => fishery.Id == fisheryId);
+    if (fisheryObject == null)
+    {
+        return TypedResults.NotFound();
+    }
+    mapper.Map(fisheryForUpdate, fisheryObject);
+    await fisheryDb.SaveChangesAsync();
+    return TypedResults.Ok(mapper.Map<FisheryDto>(fisheryObject));
+}).Produces<FisheryDto>(StatusCodes.Status200OK).Produces<NotFound>(StatusCodes.Status404NotFound);
+
+app.MapDelete("/api/fisheries/{fisheryId:guid}", async Task<Results<NotFound, NoContent>> (FisheryDbContext fisheryDb, Guid fisheryId) =>
+{
+    var fisheryObject = await fisheryDb.Fisheries.FirstOrDefaultAsync(fishery => fishery.Id == fisheryId);
+    if (fisheryObject == null)
+    {
+        return TypedResults.NotFound();
+    }
+    fisheryDb.Remove(fisheryObject);
+    await fisheryDb.SaveChangesAsync();
+    return TypedResults.NoContent();
+}).Produces<FisheryDto>(StatusCodes.Status204NoContent).Produces<NotFound>(StatusCodes.Status404NotFound);
 
 app.MapGet("/api/fisheries/{fisheryId:guid}/images", async Task<Results<NotFound, Ok<List<string>>>> (FisheryDbContext fisheryDb, Guid fisheryId) =>
 {
