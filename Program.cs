@@ -16,9 +16,9 @@ builder.Services.AddDbContext<FisheryDbContext>(o => o.UseSqlite(
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 // Configure authentication
-builder.Services.AddAuthentication("Bearer");
-                //.AddJwtBearer();
+builder.Services.AddAuthentication().AddJwtBearer();
 builder.Services.AddAuthorization();
+
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddProblemDetails(); // ensures that standardized error responses are returned when exception is thrown, according RFC 7231 https://tools.ietf.org/html/rfc7231#section-6.6.1
 
@@ -32,12 +32,13 @@ app.UseAuthorization();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("v1/swagger.json", "My API V1");
+    });
 } else
 {
     app.UseExceptionHandler();
-    app.UseSwagger();
-    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();

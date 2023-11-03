@@ -10,7 +10,8 @@ namespace FishingDiaryAPI.Extensions
     {
         public static void RegisterFisheriesEndpoints(this IEndpointRouteBuilder endpointRouteBuilder)
         {
-            var fisheriesEndpoint = endpointRouteBuilder.MapGroup("/fisheries");
+            var fisheriesEndpoint = endpointRouteBuilder.MapGroup("/fisheries")
+                .RequireAuthorization();
             var fisheriesWithGuidIdEndpoints = fisheriesEndpoint.MapGroup("/{fisheryId:guid}");
 
             fisheriesEndpoint.MapGet("", FisheriesHandlers.GetFisheries)
