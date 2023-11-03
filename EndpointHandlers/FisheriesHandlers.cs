@@ -10,8 +10,9 @@ namespace FishingDiaryAPI.EndpointHandlers
 {
     public static class FisheriesHandlers
     {
-        public static async Task<Ok<IEnumerable<FisheryDto>>> GetFisheries(FisheryDbContext fisheryDb, IMapper mapper)
+        public static async Task<Ok<IEnumerable<FisheryDto>>> GetFisheries(FisheryDbContext fisheryDb, IMapper mapper, ILogger<FisheryDto> logger)
         {
+            logger.LogInformation("GetFisheries...");
             {
                 return TypedResults.Ok(mapper.Map<IEnumerable<FisheryDto>>(await fisheryDb.Fisheries.ToListAsync()));
             }
