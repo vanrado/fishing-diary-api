@@ -80,11 +80,11 @@ app.MapGet("/api/testException", () =>
 app.RegisterFisheriesEndpoints();
 
 // recreate & migrate the database on each run, for demo purposes
-//using (var serviceScope = app.Services.GetService<IServiceScopeFactory>().CreateScope())
-//{
-//    var context = serviceScope.ServiceProvider.GetRequiredService<FisheryDbContext>();
-//    context.Database.EnsureDeleted();
-//    context.Database.Migrate();
-//}
+using (var serviceScope = app.Services.GetService<IServiceScopeFactory>().CreateScope())
+{
+    var context = serviceScope.ServiceProvider.GetRequiredService<FisheryDbContext>();
+    context.Database.EnsureDeleted();
+    context.Database.Migrate();
+}
 
 app.Run();
