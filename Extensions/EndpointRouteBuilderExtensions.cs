@@ -1,7 +1,6 @@
 ﻿using FishingDiaryAPI.EndpointFilters;
 using FishingDiaryAPI.EndpointHandlers;
 using FishingDiaryAPI.Models;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace FishingDiaryAPI.Extensions
@@ -36,6 +35,22 @@ namespace FishingDiaryAPI.Extensions
                 .AddEndpointFilter<NotFoundResponseFilter>()
                 .Produces<FisheryDto>(StatusCodes.Status204NoContent)
                 .Produces<NotFound>(StatusCodes.Status404NotFound);
+        }
+
+        public static void RegisterWeatherEndpoints(this IEndpointRouteBuilder endpointRouteBuilder)
+        {
+            endpointRouteBuilder.MapGet("/weather/{latitude}/{longitude}", WeatherHandlers.GetLocationWeather)
+                .RequireAuthorization()
+                .Produces<WeatherDto>(200);
+        }
+
+        public static void RegisterFishingDiaryEntries(this IEndpointRouteBuilder endpointRouteBuilder)
+        {
+            endpointRouteBuilder.MapGet("/api/diary/entries", FishingDiaryHandlers.GetFishingDiaryEntries)
+                .Produces<List<FishingDiaryEntryDto>>(200);
+
+            endpointRouteBuilder.MapPost("/api/diary/entries", FishingDiaryHandlers.CreateFishingDiaryEntry)
+                .Produces<FishingDiaryEntryDto>(201);
         }
     }
 }
