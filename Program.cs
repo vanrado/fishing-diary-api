@@ -2,10 +2,6 @@ using FishingDiaryAPI.DbContexts;
 using FishingDiaryAPI.Mocks;
 using FishingDiaryAPI.Models;
 using Microsoft.EntityFrameworkCore;
-using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http.HttpResults;
-using FishingDiaryAPI.Entities;
 using FishingDiaryAPI.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
