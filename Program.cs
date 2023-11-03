@@ -6,6 +6,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http.HttpResults;
 using FishingDiaryAPI.Entities;
+using FishingDiaryAPI.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -69,82 +70,7 @@ app.MapPost("/api/diary/entries", async (FishingDiaryEntryDto entry) =>
     return Results.Created($"/entries/{Guid.NewGuid()}", entry);
 }).Produces<FishingDiaryEntryDto>(201);
 
-
-app.MapGet("/api/fisheries", async Task<Ok<IEnumerable<FisheryDto>>> (FisheryDbContext fisheryDb, IMapper mapper) =>
-{
-    return TypedResults.Ok(mapper.Map<IEnumerable<FisheryDto>>(await fisheryDb.Fisheries.ToListAsync()));
-}).Produces<IEnumerable<FisheryDto>>(StatusCodes.Status200OK);
-
-app.MapGet("/api/fisheries/search", async Task<Results<NotFound, Ok<IEnumerable<FisheryDto>>>> (FisheryDbContext fisheryDb, IMapper mapper, [FromQuery] string fisheryName) =>
-{
-    var fisheryObject = await fisheryDb.Fisheries.Where(fishery => fishery.Title.Contains(fisheryName)).ToListAsync();
-    var mappedDtos = mapper.Map<IEnumerable<FisheryDto>>(fisheryObject);
-    return TypedResults.Ok(mappedDtos);
-}).Produces<IEnumerable<FisheryDto>>(StatusCodes.Status200OK);
-
-
-var fisheriesEndpoint = app.MapGroup("/api/fisheries");
-var fisheriesWithGuidIdEndpoints = fisheriesEndpoint.MapGroup("/{fisheryId:guid}");
-
-fisheriesEndpoint.MapPost("", async Task<CreatedAtRoute<FisheryDto>> (FisheryDbContext fisheryDb, IMapper mapper, FisheryForCreationDto fishery) =>
-{
-    var fisheryEntity = mapper.Map<Fishery>(fishery);
-    fisheryDb.Add(fisheryEntity);
-    await fisheryDb.SaveChangesAsync();
-    var fisheryDto = mapper.Map<FisheryDto>(fisheryEntity);
-    return TypedResults.CreatedAtRoute(
-        fisheryDto, 
-        "GetFishery", 
-        new { fisheryId = fisheryDto.Id });
-}).Produces<FisheryDto>(StatusCodes.Status201Created);
-
-fisheriesWithGuidIdEndpoints.MapGet("", async Task<Results<NotFound, Ok<FisheryDto>>> (FisheryDbContext fisheryDb, Guid fisheryId, IMapper mapper) =>
-{
-    var fisheryObject = await fisheryDb.Fisheries.FirstOrDefaultAsync(fishery => fishery.Id == fisheryId);
-    if (fisheryObject == null)
-    {
-        return TypedResults.NotFound();
-    }
-
-    return TypedResults.Ok(mapper.Map<FisheryDto>(fisheryObject));
-}).WithName("GetFishery").Produces<FisheryDto>(StatusCodes.Status200OK).Produces<NotFound>(StatusCodes.Status404NotFound);
-
-fisheriesWithGuidIdEndpoints.MapPut("", async Task<Results<NotFound, Ok<FisheryDto>>> (FisheryDbContext fisheryDb, IMapper mapper, Guid fisheryId, FisheryForUpdate fisheryForUpdate) =>
-{
-    var fisheryObject = await fisheryDb.Fisheries.FirstOrDefaultAsync(fishery => fishery.Id == fisheryId);
-    if (fisheryObject == null)
-    {
-        return TypedResults.NotFound();
-    }
-    mapper.Map(fisheryForUpdate, fisheryObject);
-    await fisheryDb.SaveChangesAsync();
-    return TypedResults.Ok(mapper.Map<FisheryDto>(fisheryObject));
-}).Produces<FisheryDto>(StatusCodes.Status200OK).Produces<NotFound>(StatusCodes.Status404NotFound);
-
-fisheriesWithGuidIdEndpoints.MapDelete("", async Task<Results<NotFound, NoContent>> (FisheryDbContext fisheryDb, Guid fisheryId) =>
-{
-    var fisheryObject = await fisheryDb.Fisheries.FirstOrDefaultAsync(fishery => fishery.Id == fisheryId);
-    if (fisheryObject == null)
-    {
-        return TypedResults.NotFound();
-    }
-    fisheryDb.Remove(fisheryObject);
-    await fisheryDb.SaveChangesAsync();
-    return TypedResults.NoContent();
-}).Produces<FisheryDto>(StatusCodes.Status204NoContent).Produces<NotFound>(StatusCodes.Status404NotFound);
-
-fisheriesWithGuidIdEndpoints.MapGet("/images", async Task<Results<NotFound, Ok<List<string>>>> (FisheryDbContext fisheryDb, Guid fisheryId) =>
-{
-    var fisheryObject = await fisheryDb.Fisheries.FirstOrDefaultAsync(fishery => fishery.Id == fisheryId);
-    if (fisheryObject != null)
-    {
-        return TypedResults.Ok(fisheryObject.Images);
-    }
-    else
-    {
-        return TypedResults.NotFound();
-    }
-}).Produces<FisheryDto>(StatusCodes.Status200OK).Produces<NotFound>(StatusCodes.Status404NotFound);
+app.RegisterFisheriesEndpoints();
 
 // recreate & migrate the database on each run, for demo purposes
 using (var serviceScope = app.Services.GetService<IServiceScopeFactory>().CreateScope())
