@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FishingDiaryAPI.Migrations
 {
     [DbContext(typeof(FisheryDbContext))]
-    [Migration("20231101125927_Images")]
-    partial class Images
+    [Migration("20231104144442_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,29 +20,7 @@ namespace FishingDiaryAPI.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.13");
 
-            modelBuilder.Entity("FisheryUser", b =>
-                {
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("fisheriesId")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("UserId", "fisheriesId");
-
-                    b.HasIndex("fisheriesId");
-
-                    b.ToTable("FisheryUser");
-
-                    b.HasData(
-                        new
-                        {
-                            UserId = new Guid("ebe94d5d-2ad8-4886-b246-05a1fad83d1c"),
-                            fisheriesId = new Guid("da2fd609-d754-4feb-8acd-c4f9ff13ba96")
-                        });
-                });
-
-            modelBuilder.Entity("FishingDiaryAPI.Models.Fishery", b =>
+            modelBuilder.Entity("FishingDiaryAPI.Entities.Fishery", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -64,47 +42,52 @@ namespace FishingDiaryAPI.Migrations
                         new
                         {
                             Id = new Guid("d28888e9-2ba9-473a-a40f-e38cb54f9b35"),
-                            Images = "[]",
+                            Images = "[\"https://www.fishsurfing.com/cdn/fspw-sk-images/30769/5d426de9.webp\",\"https://www.fishsurfing.com/cdn/fspw-sk-images/30769/7a0e641c.webp\"]",
                             Title = "VN Evička"
                         },
                         new
                         {
                             Id = new Guid("da2fd609-d754-4feb-8acd-c4f9ff13ba96"),
-                            Images = "[]",
+                            Images = "[\"https://www.fishsurfing.com/cdn/fspw-sk-images/31274/09ce1094.webp\",\"https://www.fishsurfing.com/cdn/fspw-sk-images/31274/2731d261.webp\"]",
                             Title = "OR Melečka č. 1"
                         });
                 });
 
-            modelBuilder.Entity("FishingDiaryAPI.Models.User", b =>
+            modelBuilder.Entity("FishingDiaryAPI.Entities.UserFishery", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<Guid>("UserId")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("Id");
+                    b.Property<Guid>("FisheryId")
+                        .HasColumnType("TEXT");
 
-                    b.ToTable("User");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("UserId", "FisheryId");
+
+                    b.HasIndex("FisheryId");
+
+                    b.ToTable("UserFisheries");
 
                     b.HasData(
                         new
                         {
-                            Id = new Guid("ebe94d5d-2ad8-4886-b246-05a1fad83d1c")
+                            UserId = new Guid("12345678-1234-5678-1234-567812345678"),
+                            FisheryId = new Guid("d28888e9-2ba9-473a-a40f-e38cb54f9b35"),
+                            Id = new Guid("39de575e-61a0-4b8c-8762-6c9bcd43f3ec")
                         });
                 });
 
-            modelBuilder.Entity("FisheryUser", b =>
+            modelBuilder.Entity("FishingDiaryAPI.Entities.UserFishery", b =>
                 {
-                    b.HasOne("FishingDiaryAPI.Models.User", null)
+                    b.HasOne("FishingDiaryAPI.Entities.Fishery", "Fishery")
                         .WithMany()
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("FisheryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("FishingDiaryAPI.Models.Fishery", null)
-                        .WithMany()
-                        .HasForeignKey("fisheriesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Fishery");
                 });
 #pragma warning restore 612, 618
         }

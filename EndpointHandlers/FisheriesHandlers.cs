@@ -12,10 +12,8 @@ namespace FishingDiaryAPI.EndpointHandlers
     {
         public static async Task<Ok<IEnumerable<FisheryDto>>> GetFisheries(FisheryDbContext fisheryDb, IMapper mapper, ILogger<FisheryDto> logger)
         {
-            logger.LogInformation("GetFisheries...");
-            {
-                return TypedResults.Ok(mapper.Map<IEnumerable<FisheryDto>>(await fisheryDb.Fisheries.ToListAsync()));
-            }
+
+            return TypedResults.Ok(mapper.Map<IEnumerable<FisheryDto>>(await fisheryDb.Fisheries.ToListAsync()));
         }
 
         public static async Task<Results<NotFound, Ok<IEnumerable<FisheryDto>>>> SearchForFisheryByName(FisheryDbContext fisheryDb, IMapper mapper, [FromQuery] string fisheryName)
@@ -41,7 +39,6 @@ namespace FishingDiaryAPI.EndpointHandlers
                 {
                     fisheryId = fisheryDto.Id
                 });
-
         }
 
         public static async Task<Results<NotFound, Ok<FisheryDto>>> GetFishery(FisheryDbContext fisheryDb, Guid fisheryId, IMapper mapper)
@@ -97,6 +94,86 @@ namespace FishingDiaryAPI.EndpointHandlers
                 return TypedResults.NotFound();
             }
 
+        }
+
+        public static async Task<Ok<IEnumerable<FisheryDto>>> GetFavoriteFisheries(FisheryDbContext fisheryDb, IMapper mapper, HttpContext context)
+        {
+            var userId = Guid.Parse(context.User.GetUserId());
+
+            var fisheries = await fisheryDb.UserFisheries
+                .Where(fishery => fishery.UserId == userId)
+                .Select(fishery => fishery.Fishery)
+                .ToListAsync();
+            var fisheryDtos = mapper.Map<IEnumerable<FisheryDto>>(fisheries);
+            return TypedResults.Ok(fisheryDtos);
+        }
+
+        public static async Task<Results<NotFound, Ok<UserFisheryDto>>> GetFavoriteFishery(FisheryDbContext fisheryDb, IMapper mapper, Guid userFisheryId)
+        {
+            var userFishery = await fisheryDb.UserFisheries
+                .FirstOrDefaultAsync(userFishery => userFishery.Id == userFisheryId);
+
+            if (userFishery == null)
+            {
+                return TypedResults.NotFound();
+            }
+
+            var userFisheryDto = mapper.Map<UserFisheryDto>(userFishery);
+            return TypedResults.Ok(userFisheryDto);
+        }
+
+        // Delete the specified fishery from the user's favorites in the database
+        public static async Task<Results<NotFound, NoContent>> DeleteFavoriteFishery(HttpContext context, FisheryDbContext fisheryDb, Guid fisheryId)
+        {
+
+            var userId = Guid.Parse(context.User.GetUserId());
+
+            // check if the user fishery association exists
+            var userFishery = await fisheryDb.UserFisheries.FirstOrDefaultAsync(userFishery => userFishery.UserId == userId && userFishery.FisheryId == fisheryId);
+            if (userFishery == null)
+            {
+                return TypedResults.NotFound();
+            }
+
+
+            // remove the user fishery association
+            fisheryDb.UserFisheries.Remove(userFishery);
+            await fisheryDb.SaveChangesAsync();
+
+            return TypedResults.NoContent();
+        }
+
+        public static async Task<Results<NotFound, Conflict, CreatedAtRoute<UserFisheryDto>>> AddFavoriteFishery(FisheryDbContext fisheryDb, HttpContext context, Guid fisheryId, IMapper mapper)
+        {
+            var userId = Guid.Parse(context.User.GetUserId());
+
+            // check if the fishery exists
+            var fishery = await fisheryDb.Fisheries.FirstOrDefaultAsync(fishery => fishery.Id == fisheryId);
+            if (fishery == null)
+            {
+                return TypedResults.NotFound();
+            }
+
+            // check if the user has already favorited the fishery
+            var userFishery = await fisheryDb.UserFisheries.FirstOrDefaultAsync(userFishery => userFishery.UserId == userId && userFishery.FisheryId == fisheryId);
+            if (userFishery != null)
+            {
+                return TypedResults.Conflict();
+            }
+
+            // Add a new entry to the UserFishery
+            var userFisheryEntity = new UserFishery
+            {
+                Id = Guid.NewGuid(),
+                UserId = userId,
+                FisheryId = fisheryId
+            };
+            fisheryDb.UserFisheries.Add(userFisheryEntity);
+            await fisheryDb.SaveChangesAsync();
+
+            // return result
+            var userFisheryDto = mapper.Map<UserFisheryDto>(userFisheryEntity);
+            return TypedResults.CreatedAtRoute(userFisheryDto, "GetFavoriteFishery", new { userFisheryId = userFisheryEntity.Id });
         }
     }
 }

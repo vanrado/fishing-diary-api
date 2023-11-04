@@ -10,6 +10,7 @@ namespace FishingDiaryAPI.Profiles
             CreateMap<Fishery, FisheryDto>();
             CreateMap<FisheryForCreationDto, Fishery>();
             CreateMap<FisheryForUpdate, Fishery>();
+            CreateMap<UserFishery, UserFisheryDto>();
         }
     }
 }

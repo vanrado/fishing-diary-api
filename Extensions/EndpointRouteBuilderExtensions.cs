@@ -28,6 +28,16 @@ namespace FishingDiaryAPI.Extensions
                 .AddEndpointFilter<ValidateAnnotationsFilter>()
                 .ProducesValidationProblem();
 
+            fisheriesEndpoint.MapGet("/favorites", FisheriesHandlers.GetFavoriteFisheries)
+                .WithSummary("Get a user's favorite fisheries")
+                .WithDescription("Retrieve a list of the user's favorite fisheries.")
+                .WithName("GetFavoriteFisheries");
+
+            fisheriesEndpoint.MapGet("/favorites/{userFisheryId:guid}", FisheriesHandlers.GetFavoriteFishery)
+                .WithSummary("Get a favorite fishery")
+                .WithDescription("This endpoint retrieves a favorite fishery for a user. The userFisheryId in the path should be replaced with the ID of the UserFishery resource.")
+                .WithName("GetFavoriteFishery");
+
             fisheriesWithGuidIdEndpoints.MapGet("", FisheriesHandlers.GetFishery)
                 .WithSummary("Get a fishery by ID")
                 .WithDescription("Retrieve a specific fishery by its unique identifier.")
@@ -47,6 +57,15 @@ namespace FishingDiaryAPI.Extensions
                 .AddEndpointFilter(new FisheryIsLockedFilter(new("d28888e9-2ba9-473a-a40f-e38cb54f9b35")))
                 .AddEndpointFilter<NotFoundResponseFilter>()
                 .ProducesValidationProblem();
+
+            fisheriesWithGuidIdEndpoints.MapPost("/favorite", FisheriesHandlers.AddFavoriteFishery)
+                .WithSummary("Add a fishery to favorites")
+                .WithDescription("Add a specific fishery to the user's list of favorite fisheries.");
+
+            fisheriesWithGuidIdEndpoints.MapDelete("/favorite", FisheriesHandlers.DeleteFavoriteFishery)
+                .WithSummary("Remove a fishery from favorites")
+                .WithDescription("Remove a specific fishery from the user's list of favorite fisheries.");
+
         }
 
         public static void RegisterWeatherEndpoints(this IEndpointRouteBuilder endpointRouteBuilder)

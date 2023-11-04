@@ -68,5 +68,24 @@ namespace FishingDiaryAPI.Mocks
             },
         };
         }
+
+        public static List<UserFishery> GetUserFisheryEntries()
+        {
+            return new List<UserFishery>
+            {
+                new UserFishery
+                {
+                    Id = Guid.NewGuid(),
+                    UserId = Guid.Parse("<existing User ID>"),
+                    FisheryId = Guid.Parse("d28888e9-2ba9-473a-a40f-e38cb54f9b35")
+                },
+                new UserFishery
+                {
+                    Id = Guid.NewGuid(),
+                    UserId = Guid.Parse("<existing User ID>"),
+                    FisheryId = Guid.Parse("da2fd609-d754-4feb-8acd-c4f9ff13ba96")
+                },
+            };
+        }
     }
 }

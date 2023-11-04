@@ -17,29 +17,7 @@ namespace FishingDiaryAPI.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.13");
 
-            modelBuilder.Entity("FisheryUser", b =>
-                {
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("fisheriesId")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("UserId", "fisheriesId");
-
-                    b.HasIndex("fisheriesId");
-
-                    b.ToTable("FisheryUser");
-
-                    b.HasData(
-                        new
-                        {
-                            UserId = new Guid("ebe94d5d-2ad8-4886-b246-05a1fad83d1c"),
-                            fisheriesId = new Guid("da2fd609-d754-4feb-8acd-c4f9ff13ba96")
-                        });
-                });
-
-            modelBuilder.Entity("FishingDiaryAPI.Models.Fishery", b =>
+            modelBuilder.Entity("FishingDiaryAPI.Entities.Fishery", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -72,36 +50,41 @@ namespace FishingDiaryAPI.Migrations
                         });
                 });
 
-            modelBuilder.Entity("FishingDiaryAPI.Models.User", b =>
+            modelBuilder.Entity("FishingDiaryAPI.Entities.UserFishery", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<Guid>("UserId")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("Id");
+                    b.Property<Guid>("FisheryId")
+                        .HasColumnType("TEXT");
 
-                    b.ToTable("User");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("UserId", "FisheryId");
+
+                    b.HasIndex("FisheryId");
+
+                    b.ToTable("UserFisheries");
 
                     b.HasData(
                         new
                         {
-                            Id = new Guid("ebe94d5d-2ad8-4886-b246-05a1fad83d1c")
+                            UserId = new Guid("12345678-1234-5678-1234-567812345678"),
+                            FisheryId = new Guid("d28888e9-2ba9-473a-a40f-e38cb54f9b35"),
+                            Id = new Guid("39de575e-61a0-4b8c-8762-6c9bcd43f3ec")
                         });
                 });
 
-            modelBuilder.Entity("FisheryUser", b =>
+            modelBuilder.Entity("FishingDiaryAPI.Entities.UserFishery", b =>
                 {
-                    b.HasOne("FishingDiaryAPI.Models.User", null)
+                    b.HasOne("FishingDiaryAPI.Entities.Fishery", "Fishery")
                         .WithMany()
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("FisheryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("FishingDiaryAPI.Models.Fishery", null)
-                        .WithMany()
-                        .HasForeignKey("fisheriesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Fishery");
                 });
 #pragma warning restore 612, 618
         }

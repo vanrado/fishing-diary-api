@@ -9,6 +9,7 @@ namespace FishingDiaryAPI.DbContexts
     public class FisheryDbContext : DbContext
     {
         public DbSet<Fishery> Fisheries { get; set; }
+        public DbSet<UserFishery> UserFisheries { get; set; }
 
         public FisheryDbContext(DbContextOptions<FisheryDbContext> options)
         : base(options)
@@ -17,7 +18,6 @@ namespace FishingDiaryAPI.DbContexts
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            _ = modelBuilder.Entity<Fishery>().HasData(MockData.GetFisheryEntries());
             // Configure the value converter for the List<Image> to persisted Json
             _ = modelBuilder.Entity<Fishery>()
                 .Property(x => x.Images)
@@ -30,10 +30,20 @@ namespace FishingDiaryAPI.DbContexts
                         c => (List<string>)c.ToList()))
                 .HasColumnType("json");
 
-            _ = modelBuilder.Entity<User>().HasData(new User { Id = Guid.Parse("ebe94d5d-2ad8-4886-b246-05a1fad83d1c") });
+            modelBuilder.Entity<UserFishery>()
+                .HasKey(uf => new { uf.UserId, uf.FisheryId });
+            modelBuilder.Entity<UserFishery>()
+                .HasOne(uf => uf.Fishery)
+                .WithMany()
+                .HasForeignKey(uf => uf.FisheryId);
 
-            _ = modelBuilder.Entity<User>().HasMany(user => user.fisheries).WithMany().UsingEntity(mnTable => mnTable.HasData(new { UserId = Guid.Parse("ebe94d5d-2ad8-4886-b246-05a1fad83d1c"), fisheriesId = Guid.Parse("da2fd609-d754-4feb-8acd-c4f9ff13ba96") }));
 
+            // Seed Fishery table
+            _ = modelBuilder.Entity<Fishery>().HasData(MockData.GetFisheryEntries());
+            // Seed UserFishery table
+            _ = modelBuilder.Entity<UserFishery>().HasData(
+                new UserFishery { UserId = Guid.Parse("12345678-1234-5678-1234-567812345678"), FisheryId = Guid.Parse("d28888e9-2ba9-473a-a40f-e38cb54f9b35"), Id = Guid.NewGuid() }
+            );
 
             base.OnModelCreating(modelBuilder);
         }
