@@ -10,31 +10,43 @@ namespace FishingDiaryAPI.Extensions
         public static void RegisterFisheriesEndpoints(this IEndpointRouteBuilder endpointRouteBuilder)
         {
             var fisheriesEndpoint = endpointRouteBuilder.MapGroup("/fisheries")
-                .RequireAuthorization();
+                .RequireAuthorization()
+                .WithOpenApi();
             var fisheriesWithGuidIdEndpoints = fisheriesEndpoint.MapGroup("/{fisheryId:guid}");
 
             fisheriesEndpoint.MapGet("", FisheriesHandlers.GetFisheries)
-                .Produces<IEnumerable<FisheryDto>>(StatusCodes.Status200OK);
+                .WithSummary("Get a list of fisheries")
+                .WithDescription("Retrieve a list of all fisheries available.");
+
             fisheriesEndpoint.MapGet("/search", FisheriesHandlers.SearchForFisheryByName)
-                .Produces<IEnumerable<FisheryDto>>(StatusCodes.Status200OK);
+                .WithSummary("Search for fisheries by name")
+                .WithDescription("Search for fisheries based on their name.");
+
             fisheriesEndpoint.MapPost("", FisheriesHandlers.CreateFishery)
+                .WithSummary("Create a new fishery")
+                .WithDescription("Create a new fishery entry.")
                 .AddEndpointFilter<ValidateAnnotationsFilter>()
-                .Produces<FisheryDto>(StatusCodes.Status201Created);
+                .ProducesValidationProblem();
+
             fisheriesWithGuidIdEndpoints.MapGet("", FisheriesHandlers.GetFishery)
-                .WithName("GetFishery")
-                .Produces<FisheryDto>(StatusCodes.Status200OK)
-                .Produces<NotFound>(StatusCodes.Status404NotFound);
+                .WithSummary("Get a fishery by ID")
+                .WithDescription("Retrieve a specific fishery by its unique identifier.")
+                .WithName("GetFishery");
+
             fisheriesWithGuidIdEndpoints.MapGet("/images", FisheriesHandlers.GetFisheryImages)
-                .Produces<FisheryDto>(StatusCodes.Status200OK)
-                .Produces<NotFound>(StatusCodes.Status404NotFound);
+                .WithSummary("Get images of a fishery by ID")
+                .WithDescription("Retrieve images associated with a specific fishery by its unique identifier.");
+
             fisheriesWithGuidIdEndpoints.MapPut("", FisheriesHandlers.UpdateFishery)
-                .Produces<FisheryDto>(StatusCodes.Status200OK)
-                .Produces<NotFound>(StatusCodes.Status404NotFound);
+                .WithSummary("Update a fishery by ID")
+                .WithDescription("Update the details of a specific fishery by its unique identifier.");
+
             fisheriesWithGuidIdEndpoints.MapDelete("", FisheriesHandlers.DeleteFishery)
+                .WithSummary("Delete a fishery by ID")
+                .WithDescription("Delete a specific fishery by its unique identifier.")
                 .AddEndpointFilter(new FisheryIsLockedFilter(new("d28888e9-2ba9-473a-a40f-e38cb54f9b35")))
                 .AddEndpointFilter<NotFoundResponseFilter>()
-                .Produces<FisheryDto>(StatusCodes.Status204NoContent)
-                .Produces<NotFound>(StatusCodes.Status404NotFound);
+                .ProducesValidationProblem();
         }
 
         public static void RegisterWeatherEndpoints(this IEndpointRouteBuilder endpointRouteBuilder)

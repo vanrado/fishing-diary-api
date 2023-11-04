@@ -1,6 +1,7 @@
 using FishingDiaryAPI.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using FishingDiaryAPI.Extensions;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,7 +13,29 @@ builder.Services.AddDbContext<FisheryDbContext>(o => o.UseSqlite(
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+// add SwaggerGen support with configuration for passing JWT Token with request fired from documentation
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("TokenAuthNZ",
+        new()
+        {
+            Name = "Authorization",
+            Description = "Token-based authentication and authorization",
+            Type = SecuritySchemeType.Http,
+            Scheme = "Bearer",
+            In = ParameterLocation.Header
+        });
+    options.AddSecurityRequirement(new()
+            {
+                {
+                    new ()
+                    {
+                        Reference = new OpenApiReference {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "TokenAuthNZ" }
+                    }, new List<string>()}
+            });
+});
 
 // Configure authentication
 builder.Services.AddAuthentication().AddJwtBearer();
