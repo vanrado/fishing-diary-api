@@ -30,7 +30,6 @@ namespace FishingDiaryAPI.DbContexts
                         c => (List<string>)c.ToList()))
                 .HasColumnType("json");
 
-
             _ = modelBuilder.Entity<User>().HasData(new User { Id = Guid.Parse("ebe94d5d-2ad8-4886-b246-05a1fad83d1c") });
 
             _ = modelBuilder.Entity<User>().HasMany(user => user.fisheries).WithMany().UsingEntity(mnTable => mnTable.HasData(new { UserId = Guid.Parse("ebe94d5d-2ad8-4886-b246-05a1fad83d1c"), fisheriesId = Guid.Parse("da2fd609-d754-4feb-8acd-c4f9ff13ba96") }));
