@@ -7,6 +7,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FishingDiary.API", "Fishing
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FishingDiary.UnitTests", "FishingDiary.UnitTests\FishingDiary.UnitTests.csproj", "{3636A4BD-BC02-490F-AD3C-92AE998A0DFA}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleUtils", "ConsoleUtils\ConsoleUtils.csproj", "{9714DD09-9871-4726-8FF2-6BE93B38754D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleUtils.UnitTests", "ConsoleUtils.UnitTests\ConsoleUtils.UnitTests.csproj", "{074D78F1-E1CE-4082-8CC4-7C89E2E40D53}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{3636A4BD-BC02-490F-AD3C-92AE998A0DFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3636A4BD-BC02-490F-AD3C-92AE998A0DFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3636A4BD-BC02-490F-AD3C-92AE998A0DFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9714DD09-9871-4726-8FF2-6BE93B38754D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9714DD09-9871-4726-8FF2-6BE93B38754D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9714DD09-9871-4726-8FF2-6BE93B38754D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9714DD09-9871-4726-8FF2-6BE93B38754D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{074D78F1-E1CE-4082-8CC4-7C89E2E40D53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{074D78F1-E1CE-4082-8CC4-7C89E2E40D53}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{074D78F1-E1CE-4082-8CC4-7C89E2E40D53}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{074D78F1-E1CE-4082-8CC4-7C89E2E40D53}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
