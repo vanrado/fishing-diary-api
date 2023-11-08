@@ -1,7 +1,11 @@
-﻿namespace ConsoleUtils;
+﻿using System.Text.Json.Serialization;
+
+namespace ConsoleUtils;
 
 public class ExternalMarkerDto
 {
-    public decimal Lng { get; set; }
-    public decimal Lat { get; set; }
+     [JsonPropertyName("lng")]
+    public string Lng { get; set; }
+     [JsonPropertyName("lat")]
+    public string Lat { get; set; }
 }

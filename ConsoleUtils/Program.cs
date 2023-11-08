@@ -18,5 +18,6 @@ var services = serviceScope.ServiceProvider;
 var fetcher = services.GetRequiredService<ExternalFisheryApiDataFetcher>();
 var writer = services.GetRequiredService<ExternalFisheryJsonFileWriter>();
 
-var data = await fetcher.FetchData("https://api.fishsurfing.com/v1/grounds-sk.php?lang=cs&id_user=787386&hash=H10HrZtXyzd1kBfurxc3maKmqSpf9J1Tll6SWePS3hiHN8YGXI54O6Q3pcMncynHo&water_nature=kapr&offset=", 50);
+var url = ""; // write, don't commit
+var data = await fetcher.FetchData(url, 50);
 await writer.WriteToFile(data, "fisheries.json");
