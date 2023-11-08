@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33801.468
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FishingDiaryAPI", "FishingDiary.API\FishingDiaryAPI.csproj", "{806F0520-9008-4A08-A01F-131ED4BDE297}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FishingDiary.API", "FishingDiary.API\FishingDiary.API.csproj", "{806F0520-9008-4A08-A01F-131ED4BDE297}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FishingDiaryApi.Test", "FishingDiary.UnitTests\FishingDiaryApi.Test.csproj", "{3636A4BD-BC02-490F-AD3C-92AE998A0DFA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FishingDiary.UnitTests", "FishingDiary.UnitTests\FishingDiary.UnitTests.csproj", "{3636A4BD-BC02-490F-AD3C-92AE998A0DFA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
