@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using FishingDiaryAPI.Entities;
-using FishingDiaryAPI.Models;
+using FishingDiary.API.Entities;
+using FishingDiary.API.Models;
 
-namespace FishingDiaryAPI.Profiles
+namespace FishingDiary.API.Profiles
 {
     public class FisheryProfile : Profile
     {

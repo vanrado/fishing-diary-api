@@ -1,7 +1,7 @@
-﻿using FishingDiaryAPI.Models;
-using FishingDiaryAPI.Entities;
+﻿using FishingDiary.API.Models;
+using FishingDiary.API.Entities;
 
-namespace FishingDiaryAPI.Mocks
+namespace FishingDiary.API.Mocks
 {
     public static class MockData
     {

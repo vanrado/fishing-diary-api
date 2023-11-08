@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace FishingDiaryAPI;
+namespace FishingDiary.API;
 
 public static class ClaimsPrincipalExtensions
 {

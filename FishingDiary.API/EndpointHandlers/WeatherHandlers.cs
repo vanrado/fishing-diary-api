@@ -1,7 +1,7 @@
-﻿using FishingDiaryAPI.Models;
+﻿using FishingDiary.API.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 
-namespace FishingDiaryAPI.EndpointHandlers
+namespace FishingDiary.API.EndpointHandlers
 {
     public static class WeatherHandlers
     {

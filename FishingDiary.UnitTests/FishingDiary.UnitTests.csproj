@@ -23,7 +23,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="EndpointFilters\" />
+    <ProjectReference Include="..\FishingDiary.API\FishingDiary.API.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="EndpointFilters\" />
+  </ItemGroup>
 </Project>

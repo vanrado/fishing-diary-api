@@ -1,9 +1,9 @@
-﻿using FishingDiaryAPI.EndpointFilters;
-using FishingDiaryAPI.EndpointHandlers;
-using FishingDiaryAPI.Models;
+﻿using FishingDiary.API.EndpointFilters;
+using FishingDiary.API.EndpointHandlers;
+using FishingDiary.API.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 
-namespace FishingDiaryAPI.Extensions
+namespace FishingDiary.API.Extensions
 {
     public static class EndpointRouteBuilderExtensions
     {

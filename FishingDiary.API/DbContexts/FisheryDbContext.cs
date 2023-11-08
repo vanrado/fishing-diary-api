@@ -1,10 +1,10 @@
-﻿using FishingDiaryAPI.Mocks;
-using FishingDiaryAPI.Entities;
+﻿using FishingDiary.API.Mocks;
+using FishingDiary.API.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Text.Json;
 
-namespace FishingDiaryAPI.DbContexts
+namespace FishingDiary.API.DbContexts
 {
     public class FisheryDbContext : DbContext
     {

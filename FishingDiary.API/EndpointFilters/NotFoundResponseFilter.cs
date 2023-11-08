@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace FishingDiaryAPI.EndpointFilters
+namespace FishingDiary.API.EndpointFilters
 {
     public class NotFoundResponseFilter : IEndpointFilter
     {

@@ -1,6 +1,6 @@
-using FishingDiaryAPI.DbContexts;
+using FishingDiary.API.DbContexts;
 using Microsoft.EntityFrameworkCore;
-using FishingDiaryAPI.Extensions;
+using FishingDiary.API.Extensions;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);

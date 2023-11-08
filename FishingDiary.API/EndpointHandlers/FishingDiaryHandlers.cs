@@ -1,8 +1,8 @@
-﻿using FishingDiaryAPI.Mocks;
-using FishingDiaryAPI.Models;
+﻿using FishingDiary.API.Mocks;
+using FishingDiary.API.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 
-namespace FishingDiaryAPI.EndpointHandlers
+namespace FishingDiary.API.EndpointHandlers
 {
     public static class FishingDiaryHandlers
     {

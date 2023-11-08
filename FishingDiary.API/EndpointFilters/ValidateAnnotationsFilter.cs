@@ -1,7 +1,7 @@
-﻿using FishingDiaryAPI.Models;
+﻿using FishingDiary.API.Models;
 using MiniValidation;
 
-namespace FishingDiaryAPI.EndpointFilters
+namespace FishingDiary.API.EndpointFilters
 {
     public class ValidateAnnotationsFilter : IEndpointFilter
     {

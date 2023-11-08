@@ -1,6 +1,6 @@
-﻿using FishingDiaryAPI.Models;
+﻿using FishingDiary.API.Models;
 
-namespace FishingDiaryAPI;
+namespace FishingDiary.API;
 
 public class UserFisheryDto
 {

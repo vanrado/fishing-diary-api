@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
-using FishingDiaryAPI.DbContexts;
-using FishingDiaryAPI.Entities;
-using FishingDiaryAPI.Models;
+using FishingDiary.API.DbContexts;
+using FishingDiary.API.Entities;
+using FishingDiary.API.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace FishingDiaryAPI.EndpointHandlers
+namespace FishingDiary.API.EndpointHandlers
 {
     public static class FisheriesHandlers
     {

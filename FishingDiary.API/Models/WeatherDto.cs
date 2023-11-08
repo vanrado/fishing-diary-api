@@ -1,4 +1,4 @@
-﻿namespace FishingDiaryAPI.Models
+﻿namespace FishingDiary.API.Models
 {
     public class WeatherDto
     {
