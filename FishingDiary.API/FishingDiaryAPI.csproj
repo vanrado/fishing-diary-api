@@ -4,7 +4,7 @@
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>FishingDiaryAPI</RootNamespace>
+    <RootNamespace>FishingDiary.API</RootNamespace>
     <UserSecretsId>1297d25a-d29f-4110-8f61-ab22cea53e84</UserSecretsId>
   </PropertyGroup>
 
